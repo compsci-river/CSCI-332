@@ -2,165 +2,165 @@
 
 using namespace std;
 
+struct Node{
+    int data;
+    Node* next;
 
-class Item{
-    int item;
-
-    public:
-        Item(){
-            item = -1;
-        }
-        Item(int _item){
-            item = _item;
-        }
-
-        int get(){
-            return item;
-        }
+    Node(int x){
+        data = x;
+        next = NULL;
+    }
 };
 
-class Node{
-    public:
-        Item item;
-        Node* ptr;
-
-        Node(Item _item){
-            item = _item;
-            ptr = NULL;
-        }
-};
-
-class RefStack{
-    Node* headptr = NULL;
+struct RefStack{
+    Node* headptr;
 
     bool isEmpty(){
         return headptr == NULL;
     }
 
-    public:
-        void Push(Item item){
-            Node node = Node(item);
-            node.ptr = headptr;
-            headptr = &node;
-        }
+    void Push(int x){
+        cout << "Attempting reference stack push." << endl;
+        Node* temp = new Node(x);
+        temp->next = headptr;
+        headptr = temp;
+        cout << "Pushed: \t" << x << "." << endl;
+    }
 
-        Item Pop(){
-            if(isEmpty()){
-                //Error
-                cout << "Stack is empty." << endl;
-            }else{
-                Item val = headptr->item;
-                headptr = headptr->ptr;
-                return val;
-            }
-            return Item();
+    int Pop(){
+        cout << "Attempting reference stack pop." << endl;
+        if(isEmpty()){
+            //Error
+            cout << "Error: stack is empty." << endl;
+        }else{
+            int x = headptr->data;
+            headptr = headptr->next;
+            cout << "Popped: \t" << x << "." << endl;
+            return x;
         }
+        return -1;
+    }
+
+    RefStack(){
+        headptr = NULL;
+    }
 };
 
-class RefQueue{
-    Node* headptr = NULL;
-    Node* rearptr = NULL;
+struct RefQueue{
+    Node* headptr;
+    Node* rearptr;
 
     bool isEmpty(){
         return headptr == NULL;
     }
 
-    public:
-        void Enqueue(Item item){
-            Node node = Node(item);
-            node.ptr = headptr;
-            if(isEmpty()){
-                rearptr = &node;
-            }
-            headptr = &node;
+    void Enqueue(int x){
+        cout << "Attempting reference queue enqueue." << endl;
+        Node* temp = new Node(x);
+        if(isEmpty()){
+            headptr = rearptr = temp;
+        }else{
+            rearptr->next = temp;
+            rearptr = temp;
         }
+        cout << "Enqueued: \t" << x << "." << endl;
+    }
 
-        Item Dequeue(){
+    int Dequeue(){
+        cout << "Attempting reference queue dequeue." << endl;
+        if(isEmpty()){
+            //Error
+            cout << "Error: queue is empty." << endl;
+        }else{
+            int x = headptr->data;
+            headptr = headptr->next;
             if(isEmpty()){
-                //Error
-                cout << "Queue is empty." << endl;
-            }else{
-                Node* node = headptr;
-                Node* prev;
-                while (node != rearptr){
-                    prev = node;
-                    node = node->ptr;
-                }
-                Item val = node->item;
-                prev->ptr = NULL;
-                rearptr = prev;
-                return val;
+                rearptr = NULL;
             }
-            return Item();
+            cout << "Dequeued: \t" << x << "." << endl;
+            return x;
         }
+        return -1;
+    }
+    RefQueue(){
+        headptr = NULL;
+        rearptr = NULL;
+    }
 };
 
-class ArrayStack{
+struct ArrayStack{
     int top = -1;
     int n = 10;
-    Item stack[10];
+    int stack[10];
 
     bool isEmpty(){
         return top < 0;
     }
 
-    public:
-        void Push(Item item){
-            if (top >= n-1){
-                //Error
-                cout << "Stack is full." << endl;
-            }else{
-                top++;
-                stack[top] = item;
-            }
+    void Push(int x){
+        cout << "Attempting array stack push." << endl;
+        if (top >= n-1){
+            //Error
+            cout << "Error: stack is full." << endl;
+        }else{
+            top++;
+            stack[top] = x;
+            cout << "Pushed: \t" << x << "." << endl;
         }
+    }
 
-        Item Pop(){
-            if (isEmpty()){
-                //Error
-                cout << "Stack is empty." << endl;
-            }else{
-                top--;
-                return stack[top+1];
-            }
-            return Item();
+    int Pop(){
+        cout << "Attempting array stack pop." << endl;
+        if (isEmpty()){
+            //Error
+            cout << "Error: stack is empty." << endl;
+        }else{
+            int x = stack[top];
+            top--;
+            cout << "Popped: \t" << x << "." << endl;
+            return x;
         }
+        return -1;
+    }
 };
 
-class ArrayQueue{
+struct ArrayQueue{
     int end = -1;
     int n = 10;
-    Item queue[10];
+    int queue[10];
 
     bool isEmpty(){
         return end < 0;
     }
 
-    public:
-        void Enqueue(Item item){
-            if (end >= n-1){
-                //Error
-                cout << "Queue is full." << endl;
-            }else{
-                end++;
-                queue[end] = item;
-            }
+    void Enqueue(int x){
+        cout << "Attempting array queue enqueue." << endl;
+        if (end >= n-1){
+            //Error
+            cout << "Error: queue is full." << endl;
+        }else{
+            end++;
+            queue[end] = x;
+            cout << "Enqueued: \t" << x << "." << endl;
         }
+    }
 
-        Item Dequeue(){
-            if (isEmpty()){
-                //Error
-                cout << "Queue is empty." << endl;
-            }else{
-                Item val = queue[0];
-                for(int i = 1; i++; i <= end){
-                    queue[i-1] = queue[i];
-                }
-                end--;
-                return val;
+    int Dequeue(){
+        cout << "Attempting array queue dequeue." << endl;
+        if (isEmpty()){
+            //Error
+            cout << "Error: queue is empty." << endl;
+        }else{
+            int x = queue[0];
+            for(int i = 0; i++; i >= end){
+                queue[i] = queue[i+1];
             }
-            return Item();
+            end--;
+            cout << "Dequeued: \t" << x << "." << endl;
+            return x;
         }
+        return -1;
+    }
 };
 
 int main(){
@@ -169,20 +169,20 @@ int main(){
     ArrayStack aStack;
     ArrayQueue aQueue;
 
-    rStack.Push(Item(5));
-    rQueue.Enqueue(Item(5));
-    aStack.Push(Item(5));
-    aQueue.Enqueue(Item(5));
+    rStack.Push(5);
+    rQueue.Enqueue(5);
+    aStack.Push(5);
+    aQueue.Enqueue(5);
 
-    rStack.Push(Item(7));
-    rQueue.Enqueue(Item(7));
-    aStack.Push(Item(7));
-    aQueue.Enqueue(Item(7));
+    rStack.Push(7);
+    rQueue.Enqueue(7);
+    aStack.Push(7);
+    aQueue.Enqueue(7);
 
-    cout << "Popping the reference stack gets: \t" << rStack.Pop().get() << endl;
-    cout << "Dequeueing the reference queue gets: \t" << rQueue.Dequeue().get() << endl;
-    cout << "Popping the array stack gets: \t" << aStack.Pop().get() << endl;
-    cout << "Dequeueing the array queue gets: \t" << aQueue.Dequeue().get() << endl << endl;
+    rStack.Pop();
+    rQueue.Dequeue();
+    aStack.Pop();
+    aQueue.Dequeue();
 
 
 }
