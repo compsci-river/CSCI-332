@@ -1,3 +1,12 @@
+//
+//
+//CSCI 332
+//River Sheppard
+//1-20-2023
+//
+//Implementing a reference based stack and queue as well as an array besed stack and queue, I don't think this needs to be turned in so I'm not going to comment it
+//also the couts do a pretty good job of discribing what is happening
+
 #include <iostream>
 
 using namespace std;
