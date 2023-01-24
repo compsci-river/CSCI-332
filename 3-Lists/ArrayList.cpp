@@ -4,7 +4,7 @@
 //River Sheppard
 //1-13-2023
 //
-//
+//Implements an array list from java, with all the functions that intails.
 //
 
 #include <iostream>
@@ -13,51 +13,54 @@
 
 using namespace std;
 
+
 class ArrayList{
     int end = -1;
     int n;
     int* ptr;
 
+    //checks if the array in its current size is full
     bool isFull(){
         return end >= n-1;
     }
 
+    //doubles n creates a new array of size n, transfers all the items from the old array into the new array, and then moves the pointer to the new array
     void Resize(){
-        if(isFull()){
-            n = 2 * n;
-            int temp[n];
-            for(int i = 0; i <= end; i++){
-                temp[i] = *(ptr + i);
-            }
-            ptr = temp;
-        }/*else if(end < n/3 && n >= 20){
-            n = n / 2;
-            int temp[n];
-            for(int i = 0; i <= end; i++){
-                temp[i] = *(ptr + i);
-            }
-            ptr = temp;
-        }*/
+        n = 2 * n;
+        int temp[n];
+        for(int i = 0; i <= end; i++){
+            temp[i] = *(ptr + i);
+        }
+        ptr = temp;
     }
 
     public:
+        //default constructor
         ArrayList(){
             ArrayList(10);
         }
 
+        //constuctor with array size of _n
         ArrayList(int _n){
             n = _n;
             int temp[_n];
             ptr = temp;
         }
 
+        //adds item at the end of the array by incrementing the index of the end by one and setting the point of the array referenced by the new end value equal to the
+        //input value, then it checks if the array is now full and resizes it if it is
         bool add(int x){
             end++;
             *(ptr + end) = x;
-            Resize();
+            if(isFull()){
+                Resize();
+            }
+            cout << "Adding:\t" << x << endl;
+            print();
             return true;
         }
 
+        //similar to the previous one, except it adds it to a middle point in the array and shifts everything after it over. then checks if it is full and resizes if needed
         void add(int x, int pos){
             if(pos > n-1){
                 return;
@@ -67,14 +70,21 @@ class ArrayList{
                 *(ptr + i) = *(ptr + i - 1);
             }
             *(ptr + pos) = x;
-            Resize();
+            if(isFull()){
+                Resize();
+            }
+            cout << "Adding:\t" << x << "\tAt:\t" << pos << endl;
+            print();
         }
 
+        //creates a new array and points to it instead of the old one
         void clear(){
             end = -1;
             n = 10;
             int temp[n];
             ptr = temp;
+            cout << "Clearing array." << endl;
+            print();
         }
 
         bool contains(int x){
@@ -129,15 +139,21 @@ class ArrayList{
             for(int i = pos; i <= end; i++){
                 *(ptr + i) = *(ptr + i + 1);
             }
+            cout << "Removing:\t" << x << "\tAt:\t" << pos << endl;
+            print();
             return x;
         }
 
         bool removeObj(int x){
-            int ind = indexOf(x);
-            if(ind != -1){
-                removeInd(ind);
+            int pos = indexOf(x);
+            if(pos != -1){
+                removeInd(pos);
+                cout << "Removing:\t" << x << "\tAt:\t" << pos << endl;
+                print();
                 return true;
             }
+            cout << "Attempted to Remove:\t" << x << "\tNot Found." << endl;
+            print();
             return false;
         }
 
@@ -182,10 +198,11 @@ class ArrayList{
         }
 
         void print(){
+            cout << "[";
             for(int i = 0; i <= end; i++){
                 cout << *(ptr + i) << "\t";
             }
-            cout << endl;
+            cout << "]" << endl;
         }
 };
 
@@ -195,18 +212,19 @@ int main(){
     list.add(6);
     list.add(7);
     list.add(8);
-    list.print();
     list.add(9,2);
     list.print();
     list.set(4,1);
-    list.print();
     list.removeInd(0);
-    list.print();
     list.add(7);
     list.set(3,2);
-    list.print();
     list.add(7,3);
-    list.print();
     list.removeObj(9);
-    list.print();
+    list.clear();
+    list.add(1);
+    list.add(3);
+    list.add(4);
+    list.add(6);
+    list.add(2,1);
+    list.add(5,5);
 }
