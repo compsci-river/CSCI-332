@@ -27,10 +27,11 @@ class ArrayList{
     //doubles n creates a new array of size n, transfers all the items from the old array into the new array, and then moves the pointer to the new array
     void Resize(){
         n = 2 * n;
-        int temp[n];
+        int* temp = new int[n];
         for(int i = 0; i <= end; i++){
             temp[i] = *(ptr + i);
         }
+        delete ptr;
         ptr = temp;
     }
 
@@ -43,18 +44,18 @@ class ArrayList{
         //constuctor with array size of _n
         ArrayList(int _n){
             n = _n;
-            int temp[_n];
+            int* temp = new int[_n];
             ptr = temp;
         }
 
         //adds item at the end of the array by incrementing the index of the end by one and setting the point of the array referenced by the new end value equal to the
         //input value, then it checks if the array is now full and resizes it if it is
         bool add(int x){
-            end++;
-            *(ptr + end) = x;
             if(isFull()){
                 Resize();
             }
+            end++;
+            *(ptr + end) = x;
             cout << "Adding:\t" << x << endl;
             print();
             return true;
@@ -62,6 +63,9 @@ class ArrayList{
 
         //similar to the previous one, except it adds it to a middle point in the array and shifts everything after it over. then checks if it is full and resizes if needed
         void add(int x, int pos){
+            if(isFull()){
+                Resize();
+            }
             if(pos > n-1){
                 return;
             }
@@ -70,9 +74,6 @@ class ArrayList{
                 *(ptr + i) = *(ptr + i - 1);
             }
             *(ptr + pos) = x;
-            if(isFull()){
-                Resize();
-            }
             cout << "Adding:\t" << x << "\tAt:\t" << pos << endl;
             print();
         }
@@ -81,7 +82,8 @@ class ArrayList{
         void clear(){
             end = -1;
             n = 10;
-            int temp[n];
+            int* temp = new int[n];
+            delete ptr;
             ptr = temp;
             cout << "Clearing array." << endl;
             print();
@@ -173,16 +175,18 @@ class ArrayList{
             return n;
         }
 
-        ArrayList sublist(int fromInd, int toInd){
-            ArrayList tempList;
+        ArrayList* sublist(int fromInd, int toInd){
+            ArrayList* tempList = new ArrayList();
             for(int i = fromInd; i < toInd; i++){
-                tempList.add(*(ptr + i));
+                tempList->add(*(ptr + i));
             }
+            cout << "Created sublist from:\t" << fromInd << "\tto:\t" << toInd << endl;
+            tempList->print();
             return tempList;
         }
 
         int* toArray(){
-            int temp[end+1];
+            int* temp = new int[end+1];
             for(int i = 0; i <= end; i++){
                 temp[i] = *(ptr + i);
             }
@@ -190,17 +194,22 @@ class ArrayList{
         }
 
         void trimToSize(){
-            int temp[end+1];
+            n = end + 1;
+            int* temp = new int[n];
             for(int i = 0; i <= end; i++){
                 temp[i] = *(ptr + i);
             }
+            delete ptr;
             ptr = temp;
         }
 
         void print(){
             cout << "[";
-            for(int i = 0; i <= end; i++){
-                cout << *(ptr + i) << "\t";
+            if(!isEmpty()){
+                cout << *ptr;
+                for(int i = 1; i <= end; i++){
+                    cout << ", " << *(ptr + i);
+                }
             }
             cout << "]" << endl;
         }
@@ -221,10 +230,13 @@ int main(){
     list.add(7,3);
     list.removeObj(9);
     list.clear();
+    list.add(0);
     list.add(1);
     list.add(3);
     list.add(4);
     list.add(6);
-    list.add(2,1);
+    list.add(2,2);
     list.add(5,5);
+    ArrayList sub = *list.sublist(3,5);
+    sub.add(9);
 }
