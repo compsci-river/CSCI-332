@@ -123,6 +123,27 @@ class RefTree{
         }
     }
 
+    bool search(int x, Node* node){
+        if(node == NULL){
+            //if the recusion reaches a null node, then that means the value x does not exist within the tree
+            cout << x << " does not exist in the tree." << endl;
+            return false;;
+        }else{
+            //Searching for the node of value x
+            if(x < node->data){
+                //Current node value is larger than x, continue search in left node
+                return search(x, node->left);
+            }else if(x > node->data){
+                //Current node value is smaller than x, continue search in right node
+                return search(x, node->right);
+            }else{
+                //Found the node of value x
+                cout << "Found " << x << endl;
+                return true;
+            }
+        }
+    }
+
     void print(Node* node, int space){
         if(node == NULL){
             return;
@@ -150,6 +171,11 @@ class RefTree{
             print();
         }
 
+        bool search(int x){
+            cout << "Searching for " << x << " in the tree" << endl;
+            return search(x, root);
+        }
+
         void print(){
             print(root, 0);
         }
@@ -169,4 +195,17 @@ int main(){
     rtree.remove(60);
     rtree.add(70);
     rtree.remove(30);
+    rtree.search(25);
+    rtree.add(25);
+    rtree.search(25);
+    rtree.add(30);
+    rtree.add(40);
+    rtree.add(35);
+    rtree.add(27);
+    rtree.add(10);
+    rtree.add(45);
+    rtree.remove(30);
+    rtree.add(62);
+    rtree.add(60);
+    rtree.add(52);
 }
