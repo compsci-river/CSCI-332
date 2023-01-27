@@ -182,7 +182,122 @@ class RefTree{
 };
 
 class ArrayTree{
+    int n = 100;
+    int tree[100];
 
+    int left(int i){
+        return 2 * i + 1;
+    }
+
+    int right(int i){
+        return 2 * i + 2;
+    }
+
+    bool hasLeftChild(int i){
+        int left = 2 * i + 1;
+        if(left >= n){
+            return false;
+        }
+        return tree[left] != NULL;
+    }
+
+    bool hasRightChild(int i){
+        int right = 2 * i + 2;
+        if(right >= n){
+            return false;
+        }
+        return tree[right] != NULL;
+    }
+
+    bool isInternal(int i){
+        return hasLeftChild(i)||hasRightChild(i);
+    }
+
+    bool hasTwoChildren(int i){
+        return hasLeftChild(i)&&hasRightChild(i);
+    }
+
+    public:
+        ArrayTree(){
+            fill_n(tree, 100, NULL);
+        }
+
+        bool add(int x){
+            int i = 0;
+            while(tree[i] != NULL){
+                if(x < tree[i]){
+                    i = left(i);
+                }else if(x > tree[i]){
+                    i = right(i);
+                }else{
+                    cout << x << " already exists in the tree." << endl;
+                    return false;
+                }
+                if(i >= n){
+                    cout << "There is no room for " << x << " in the tree." << endl;
+                }
+            }
+            tree[i] = x;
+            cout << "Added " << x << " to the tree." << endl;
+            return true;
+        }
+
+        bool remove(int x){
+            int i = 0;
+            while(tree[i] != x){
+                if(x < tree[i]){
+                    i = left(i);
+                }else if(x > tree[i]){
+                    i = right(i);
+                }
+                if(i >= n){
+                    cout <<  x << " is not in the tree." << endl;
+                }
+            }
+            if(isInternal(i)){
+                if(hasTwoChildren(i)){
+                    //if the node has two children then it must be replaced by the leftmost descendant of the right child (could also do the rightmost descendant of the
+                    //left child, but the methods are equal so it didn't matter which one I picked.)
+                    int iPrev = right(i);
+                    int iCur = right(i);
+                    while(tree[left(iCur)] != NULL){
+                        iPrev = iCur;
+                        iCur = left(iCur);
+                    }
+                    tree[i] = tree[iCur];
+                    while(tree[right(iCur)] != NULL){
+                        
+                    }
+                    /*
+                    if(iCur != iPrev){
+                        prev->left = cur->right;
+                        cur->right = node->right;
+                    }
+                    cur->left = node->left;
+                    delete node;
+                    cout << "Removed " << x << " from the tree." << endl;
+                    return cur;*/
+                }else{
+                    //if the node only has one child than the child just gets moved into its spot
+                    if(hasLeftChild(i)){
+                        tree[i] = tree[2 * i + 1];
+                        tree[2 * i + 1] = NULL;
+                        cout << "Removed " << x << " from the tree." << endl;
+                        return true;
+                    }else{
+                        tree[i] = tree[2 * i + 2];
+                        tree[2 * i + 2] = NULL;
+                        cout << "Removed " << x << " from the tree." << endl;
+                        return true;
+                    }
+                }
+            }else{
+                //If the node is external it just needs to be deleted and return null so there is no longer a pointer to it.
+                tree[i] == NULL;
+                cout << "Removed " << x << " from the tree." << endl;
+                return true;;
+            }
+        }
 };
 
 void loop(){
