@@ -181,31 +181,50 @@ class RefTree{
         }
 };
 
+class ArrayTree{
+
+};
+
+void loop(){
+    bool running = true;
+    while(running){
+        cout << "Enter 'R' to create a reference tree, 'A' to create an array tree, or 'Q' to quit:\t";
+        string tem;
+        cin >> tem;
+        if(tem == "Q"){
+            running = false;
+            cout << "Quitting..." << endl;
+        }else if(tem == "R"){
+            RefTree rtree;
+            while(running){
+                cout << "Enter 'A' to add a number to the tree, 'D' to delete a number from the tree, or 'Q' to quit:\t";
+                string temp;
+                cin >> temp;
+                if(temp == "A"){
+                    cout << "What number would you like to add to the tree:\t";
+                    string tempo;
+                    cin >> tempo;
+                    rtree.add(stoi(tempo));
+                }else if(temp == "D"){
+                    cout << "What number would you like to remove from the tree:\t";
+                    string tempo;
+                    cin >> tempo;
+                    rtree.remove(stoi(tempo));
+                }else if(temp == "Q"){
+                    running = false;
+                    cout << "Quitting..." << endl;
+                }else{
+                    cout << "Let's try again." << endl;
+                }
+            }
+        }else if(tem == "A"){
+
+        }else{
+            cout << "Let's try again." << endl;
+        }
+    }
+}
+
 int main(){
-    RefTree rtree;
-    rtree.add(50);
-    rtree.add(60);
-    rtree.add(30);
-    rtree.add(80);
-    rtree.add(70);
-    rtree.add(90);
-    rtree.add(75);
-    rtree.add(65);
-    rtree.add(55);
-    rtree.remove(60);
-    rtree.add(70);
-    rtree.remove(30);
-    rtree.search(25);
-    rtree.add(25);
-    rtree.search(25);
-    rtree.add(30);
-    rtree.add(40);
-    rtree.add(35);
-    rtree.add(27);
-    rtree.add(10);
-    rtree.add(45);
-    rtree.remove(30);
-    rtree.add(62);
-    rtree.add(60);
-    rtree.add(52);
+    loop();
 }
