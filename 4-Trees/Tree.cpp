@@ -217,6 +217,60 @@ class ArrayTree{
         return hasLeftChild(i)&&hasRightChild(i);
     }
 
+    //Moves a subtree so that the root is in a new target position
+    bool shiftSubtree(int iTarget, int iCur){
+        tree[iTarget] = tree[iCur];
+        tree[iCur] = NULL;
+        if(isInternal(iCur)){
+            if(hasTwoChildren(iCur)){
+                return shiftSubtree(left(iTarget), left(iCur))&&shiftSubtree(right(iTarget), right(iCur));
+            }else{
+                if(hasLeftChild(iCur)){
+                    return shiftSubtree(left(iTarget), left(iCur));
+                }else{
+                    return shiftSubtree(right(iTarget), right(iCur));
+                }
+            }
+        }else{
+            return true;
+        }
+    }
+
+    bool search(int x, int i){
+        if(tree[i] == NULL){
+            //if the recusion reaches a null node, then that means the value x does not exist within the tree
+            cout << x << " does not exist in the tree." << endl;
+            return false;;
+        }else{
+            //Searching for the node of value x
+            if(x < tree[i]){
+                //Current node value is larger than x, continue search in left node
+                return search(x, left(i));
+            }else if(x > tree[i]){
+                //Current node value is smaller than x, continue search in right node
+                return search(x, right(i));
+            }else{
+                //Found the node of value x
+                cout << "Found " << x << endl;
+                return true;
+            }
+        }
+    }
+
+    void print(int i, int space){
+        if(tree[i] == NULL){
+            return;
+        }else{
+            space++;
+            print(left(i),space);
+            for(int i = 0; i < space; i++){
+                cout << "\t";
+            }
+            cout << tree[i] << endl;
+            print(right(i),space);
+        }
+    }
+
     public:
         ArrayTree(){
             fill_n(tree, 100, NULL);
@@ -265,28 +319,21 @@ class ArrayTree{
                         iCur = left(iCur);
                     }
                     tree[i] = tree[iCur];
-                    while(tree[right(iCur)] != NULL){
-                        
+                    if(hasRightChild(iCur)){
+                        return shiftSubtree(iCur, right(iCur));
+                    }else{
+                        return true;
                     }
-                    /*
-                    if(iCur != iPrev){
-                        prev->left = cur->right;
-                        cur->right = node->right;
-                    }
-                    cur->left = node->left;
-                    delete node;
-                    cout << "Removed " << x << " from the tree." << endl;
-                    return cur;*/
                 }else{
                     //if the node only has one child than the child just gets moved into its spot
                     if(hasLeftChild(i)){
-                        tree[i] = tree[2 * i + 1];
-                        tree[2 * i + 1] = NULL;
+                        tree[i] = tree[left(i)];
+                        tree[left(i)] = NULL;
                         cout << "Removed " << x << " from the tree." << endl;
                         return true;
                     }else{
-                        tree[i] = tree[2 * i + 2];
-                        tree[2 * i + 2] = NULL;
+                        tree[i] = tree[right(i)];
+                        tree[right(i)] = NULL;
                         cout << "Removed " << x << " from the tree." << endl;
                         return true;
                     }
@@ -297,6 +344,14 @@ class ArrayTree{
                 cout << "Removed " << x << " from the tree." << endl;
                 return true;;
             }
+        }
+
+        bool search(int x){
+            return search(x, 0);
+        }
+
+        void print(){
+            print(0, 0);
         }
 };
 
@@ -312,7 +367,7 @@ void loop(){
         }else if(tem == "R"){
             RefTree rtree;
             while(running){
-                cout << "Enter 'A' to add a number to the tree, 'D' to delete a number from the tree, or 'Q' to quit:\t";
+                cout << "Enter 'A' to add a number to the tree, 'D' to delete a number from the tree, 'S' to search for a value in the tree, or 'Q' to quit:\t";
                 string temp;
                 cin >> temp;
                 if(temp == "A"){
@@ -325,6 +380,11 @@ void loop(){
                     string tempo;
                     cin >> tempo;
                     rtree.remove(stoi(tempo));
+                }else if(temp == "S"){
+                    cout << "What number would you like to search for in the tree:\t";
+                    string tempo;
+                    cin >> tempo;
+                    rtree.search(stoi(tempo));
                 }else if(temp == "Q"){
                     running = false;
                     cout << "Quitting..." << endl;
@@ -333,7 +393,33 @@ void loop(){
                 }
             }
         }else if(tem == "A"){
-
+            ArrayTree atree;
+            while(running){
+                cout << "Enter 'A' to add a number to the tree, 'D' to delete a number from the tree, 'S' to search for a value in the tree, or 'Q' to quit:\t";
+                string temp;
+                cin >> temp;
+                if(temp == "A"){
+                    cout << "What number would you like to add to the tree:\t";
+                    string tempo;
+                    cin >> tempo;
+                    atree.add(stoi(tempo));
+                }else if(temp == "D"){
+                    cout << "What number would you like to remove from the tree:\t";
+                    string tempo;
+                    cin >> tempo;
+                    atree.remove(stoi(tempo));
+                }else if(temp == "S"){
+                    cout << "What number would you like to search for in the tree:\t";
+                    string tempo;
+                    cin >> tempo;
+                    atree.search(stoi(tempo));
+                }else if(temp == "Q"){
+                    running = false;
+                    cout << "Quitting..." << endl;
+                }else{
+                    cout << "Let's try again." << endl;
+                }
+            }
         }else{
             cout << "Let's try again." << endl;
         }
