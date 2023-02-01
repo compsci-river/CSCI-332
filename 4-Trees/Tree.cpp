@@ -182,8 +182,9 @@ class RefTree{
 };
 
 class ArrayTree{
-    int n = 100;
-    int tree[100];
+    int n;
+    int maxI;
+    int* tree;
 
     int left(int i){
         return 2 * i + 1;
@@ -194,19 +195,11 @@ class ArrayTree{
     }
 
     bool hasLeftChild(int i){
-        int left = 2 * i + 1;
-        if(left >= n){
-            return false;
-        }
-        return tree[left] != NULL;
+        return tree[left(i)] != -1;
     }
 
     bool hasRightChild(int i){
-        int right = 2 * i + 2;
-        if(right >= n){
-            return false;
-        }
-        return tree[right] != NULL;
+        return tree[right(i)] != -1;
     }
 
     bool isInternal(int i){
@@ -220,7 +213,7 @@ class ArrayTree{
     //Moves a subtree so that the root is in a new target position
     bool shiftSubtree(int iTarget, int iCur){
         tree[iTarget] = tree[iCur];
-        tree[iCur] = NULL;
+        tree[iCur] = -1;
         if(isInternal(iCur)){
             if(hasTwoChildren(iCur)){
                 return shiftSubtree(left(iTarget), left(iCur))&&shiftSubtree(right(iTarget), right(iCur));
@@ -236,8 +229,123 @@ class ArrayTree{
         }
     }
 
+    int getMaxI(){
+        for(int i = n-1; i >= 0; i--){
+            if(tree[i] != -1){
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    int* emptyArray(int _n){
+        int* temp = new int[_n];
+        for(int i = 0; i < _n; i++){
+            temp[i] = -1;
+        }
+        return temp;
+    }
+
+    void resize(){
+        maxI = getMaxI();
+        cout << "Checking if resize is needed, maxI is: " << maxI << " and n is: " << n << endl;
+        if(right(maxI) > n-1){
+            n = 3 * maxI;
+            int* temp = emptyArray(n);
+            for(int i = 0; i <= maxI; i++){
+                temp[i] = tree[i];
+            }
+            delete tree;
+            tree = temp;
+            cout << "Resized, new n is: " << n << endl;
+        }else if(right(maxI) < n/3 && n > 10){
+            n = n / 2;
+            int* temp = emptyArray(n);
+            for(int i = 0; i <= maxI; i++){
+                temp[i] = tree[i];
+            }
+            delete tree;
+            tree = temp;
+            cout << "Resized, new n is: " << n << endl;
+        }else{
+            cout << "Resize not needed." << endl;
+        }
+    }
+
+    bool add(int x, int i){
+        if(tree[i] == -1){
+            tree[i] = x;
+            cout << "Added " << x << " to the tree." << endl;
+            return true;
+        }else{
+            if(x < tree[i]){
+                return add(x, left(i));
+            }else if(x > tree[i]){
+                return add(x, right(i));
+            }else{
+                cout << x << " already exists in the tree." << endl;
+                return false;
+            }
+        }
+    }
+
+    bool remove(int x, int i){
+        if(tree[i] == -1){
+            //if the recusion reaches a null node, then that means the value x does not exist within the tree
+            cout << x << " does not exist in the tree." << endl;
+            return false;
+        }else{
+            //Searching for the node of value x
+            if(x < tree[i]){
+                //Current node value is larger than x, continue search in left node
+                return remove(x, left(i));
+            }else if(x > tree[i]){
+                //Current node value is smaller than x, continue search in right node
+                return remove(x, right(i));
+            }else{
+                //Found the node of value x, onto deleting it
+                if(isInternal(i)){
+                    if(hasTwoChildren(i)){
+                        //if the node has two children then it must be replaced by the leftmost descendant of the right child (could also do the rightmost descendant of the
+                        //left child, but the methods are equal so it didn't matter which one I picked.)
+                        int iPrev = right(i);
+                        int iCur = right(i);
+                        while(tree[left(iCur)] != -1){
+                            iPrev = iCur;
+                            iCur = left(iCur);
+                        }
+                        tree[i] = tree[iCur];
+                        tree[iCur] = -1;
+                        cout << "Removed " << x << " from the tree." << endl;
+                        if(hasRightChild(iCur)){
+                            return shiftSubtree(iCur, right(iCur));
+                        }else{
+                            return true;
+                        }
+                    }else{
+                        //if the node only has one child than the child just gets moved into its spot
+                        if(hasLeftChild(i)){
+                            bool temp = shiftSubtree(i, left(i));
+                            cout << "Removed " << x << " from the tree." << endl;
+                            return temp;
+                        }else{
+                            bool temp = shiftSubtree(i, right(i));
+                            cout << "Removed " << x << " from the tree." << endl;
+                            return temp;
+                        }
+                    }
+                }else{
+                    //If the node is external it just needs to be deleted and return null so there is no longer a pointer to it.
+                    tree[i] = -1;
+                    cout << "Removed " << x << " from the tree." << endl;
+                    return true;
+                }
+            }
+        }
+    }
+
     bool search(int x, int i){
-        if(tree[i] == NULL){
+        if(tree[i] == -1){
             //if the recusion reaches a null node, then that means the value x does not exist within the tree
             cout << x << " does not exist in the tree." << endl;
             return false;;
@@ -258,7 +366,7 @@ class ArrayTree{
     }
 
     void print(int i, int space){
-        if(tree[i] == NULL){
+        if(tree[i] == -1){
             return;
         }else{
             space++;
@@ -273,80 +381,28 @@ class ArrayTree{
 
     public:
         ArrayTree(){
-            fill_n(tree, 100, NULL);
+            n = 10;
+            tree = emptyArray(n);
         }
 
         bool add(int x){
-            int i = 0;
-            while(tree[i] != NULL){
-                if(x < tree[i]){
-                    i = left(i);
-                }else if(x > tree[i]){
-                    i = right(i);
-                }else{
-                    cout << x << " already exists in the tree." << endl;
-                    return false;
-                }
-                if(i >= n){
-                    cout << "There is no room for " << x << " in the tree." << endl;
-                }
-            }
-            tree[i] = x;
-            cout << "Added " << x << " to the tree." << endl;
-            return true;
+            cout << "Attempting to add " << x << " to the tree." << endl;
+            bool temp = add(x, 0);
+            resize();
+            print();
+            return temp;
         }
 
         bool remove(int x){
-            int i = 0;
-            while(tree[i] != x){
-                if(x < tree[i]){
-                    i = left(i);
-                }else if(x > tree[i]){
-                    i = right(i);
-                }
-                if(i >= n){
-                    cout <<  x << " is not in the tree." << endl;
-                }
-            }
-            if(isInternal(i)){
-                if(hasTwoChildren(i)){
-                    //if the node has two children then it must be replaced by the leftmost descendant of the right child (could also do the rightmost descendant of the
-                    //left child, but the methods are equal so it didn't matter which one I picked.)
-                    int iPrev = right(i);
-                    int iCur = right(i);
-                    while(tree[left(iCur)] != NULL){
-                        iPrev = iCur;
-                        iCur = left(iCur);
-                    }
-                    tree[i] = tree[iCur];
-                    if(hasRightChild(iCur)){
-                        return shiftSubtree(iCur, right(iCur));
-                    }else{
-                        return true;
-                    }
-                }else{
-                    //if the node only has one child than the child just gets moved into its spot
-                    if(hasLeftChild(i)){
-                        tree[i] = tree[left(i)];
-                        tree[left(i)] = NULL;
-                        cout << "Removed " << x << " from the tree." << endl;
-                        return true;
-                    }else{
-                        tree[i] = tree[right(i)];
-                        tree[right(i)] = NULL;
-                        cout << "Removed " << x << " from the tree." << endl;
-                        return true;
-                    }
-                }
-            }else{
-                //If the node is external it just needs to be deleted and return null so there is no longer a pointer to it.
-                tree[i] == NULL;
-                cout << "Removed " << x << " from the tree." << endl;
-                return true;;
-            }
+            cout << "Attempting to remove " << x << " from the tree." << endl;
+            bool temp = remove(x, 0);
+            resize();
+            print();
+            return temp;
         }
 
         bool search(int x){
+            cout << "Searching for " << x << " in the tree" << endl;
             return search(x, 0);
         }
 
