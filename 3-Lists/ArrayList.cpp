@@ -89,6 +89,8 @@ class ArrayList{
             print();
         }
 
+        //Checks if the list contains the given value, returns true if it runs into the value, returns false if it reads all of the values and the searched value
+        //is not present
         bool contains(int x){
             for(int i = 0; i <= end; i++){
                 if(*(ptr + i) == x){
@@ -98,6 +100,7 @@ class ArrayList{
             return false;
         }
 
+        //Resizes the array to ensure it is capable of fitting _n values
         void ensureCapacity(int _n){
             if(n < _n){
                 n = _n;
@@ -109,10 +112,12 @@ class ArrayList{
             }
         }
 
+        //returns the item at the given position
         int get(int pos){
             return *(ptr + pos);
         }
 
+        //returns the index of the first instance of the searched for item
         int indexOf(int x){
             for(int i = 0; i <= end; i++){
                 if(*(ptr + i) == x){
