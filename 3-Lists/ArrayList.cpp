@@ -4,7 +4,8 @@
 //River Sheppard
 //1-13-2023
 //
-//Implements an array list from java, with all the functions that intails.
+//Implements an array list from java, with all the functions that intails. I finished this weeks ago and have been trying to come up with the motivation to fully comment
+//my work, today(2/15/2023) I decided I don't have that motivation so here you go.
 //
 
 #include <iostream>
