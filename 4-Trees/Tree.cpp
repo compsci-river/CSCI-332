@@ -4,7 +4,8 @@
 //River Sheppard
 //1-13-2023
 //
-//
+//Some of this is commented, other parts are not, I think everything that needs to be commented to demonstrate my understanding is already commented, so I have decided to be 
+//done commenting because I don't like commenting
 //
 
 #include <iostream>
